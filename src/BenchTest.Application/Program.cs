@@ -20,19 +20,6 @@ public class MaxValueBenchmark
     [Benchmark]
     public int MaxUsingForLoop()
     {
-        //Parallel
-        //var max = int.MinValue;
-        //Parallel.For(0, _numbers.Count, i =>
-        //{
-        //    lock (_numbers)
-        //    {
-        //        if (_numbers[i] > max)
-        //        {
-        //            max = _numbers[i];
-        //        }
-        //    }
-        //});
-
         var max = int.MinValue;
         for (var i = 0; i < _numbers.Count; i++)
         {
@@ -41,15 +28,37 @@ public class MaxValueBenchmark
                 max = _numbers[i];
             }
         }
+
+        return max;
+    }
+
+    [Benchmark]
+    public int ParallelMaxUsingForLoop()
+    {
+        var max = int.MinValue;
+        Parallel.For(0, _numbers.Count, i =>
+        {
+            lock (_numbers)
+            {
+                if (_numbers[i] > max)
+                {
+                    max = _numbers[i];
+                }
+            }
+        });
+
         return max;
     }
 
     [Benchmark]
     public int MaxUsingLinq()
     {
-        //Parallel
-        //return _numbers.AsParallel().Max();
-
         return _numbers.Max();
+    }
+
+    [Benchmark]
+    public int ParallelMaxUsingLinq()
+    {
+        return _numbers.AsParallel().Max();
     }
 }
